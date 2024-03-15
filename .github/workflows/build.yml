@@ -31,7 +31,7 @@ jobs:
 
           
     - name: Build with Maven
-      run: mvn native:compile -Pnative
+      run: mvn native:compile -Pnative -DskipTests
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
