@@ -1,0 +1,40 @@
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+
+name: kafka-topic-size build
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Graal setup
+      uses: graalvm/setup-graalvm@v1
+      with:
+        # Java version. See examples of supported syntax in the README file.
+        java-version: '21'
+        # GraalVM distribution. See the list of available distributions in the README file.
+        distribution: 'graalvm'
+        components: 'native-image'
+        native-image-job-reports: true 
+        native-image-pr-reports: true
+
+          
+    - name: Build with Maven
+      run: mvn native:compile -Pnative
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: native-binary
+        path: ./target/kafka-topic-size
